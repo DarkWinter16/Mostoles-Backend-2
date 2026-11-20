@@ -77,22 +77,33 @@ select fabricante.nombre, count(*) `Total de Productos`
    mayor o igual al precio promedio, o medio, de todos los productos 
    de su mismo fabricante
    
- */
+/* Por sugerencia  */
+/* Uso de la clausula USING */
+/* Por sugerencia y cortesia de Elias, la consulta anterior es mejor implementarla utilizando NATURAL JOIN, en 
+lugar de INNER JOIN, porque el NATURAL JOIN es perfecto cuando hay campos en las dos tablas que tiene el mismo 
+nombre, y nos evita utilizar la clausula ON USING */
 
 select producto.*
 from producto join (
 	select id_fabricante, avg(precio) precioPromedio
     from producto
-    group by id_fabricante) t on producto.id_fabricante = t.id_fabricante 
-    and producto.precio >= precioPromedio
+    group by id_fabricante) t using (id_fabricante)
+    where producto.precio >= precioPromedio
     order by precio desc;
 
+/* Uso de Natural JOIN */
+
+select producto.*
+from producto natural join (
+	select id_fabricante, avg(precio) precioPromedio
+    from producto
+    group by id_fabricante) t 
+    where producto.precio >= precioPromedio
+    order by precio desc;
+
+/**/
 
 -- Consultas auxiliares
 table fabricante;
 table producto;
-
-
-
-
 
